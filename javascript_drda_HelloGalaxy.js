@@ -91,8 +91,6 @@ function doEverything(res){
 			sql = "create table if not exists " + tableName + " (City VARCHAR(255), Population INTEGER, Longitude DECIMAL(8,4), Latitude DECIMAL(8,4), Code INTEGER)";
 			conn.prepareSync(sql).executeSync().closeSync();
 	
-			if (err){ handleError(err, res, conn); return; }
-			
 			commands.push("\tCreate a table named: " + tableName);
 			commands.push("\tCreate Table SQL: " + sql);
 	
@@ -105,8 +103,6 @@ function doEverything(res){
 			sql = "insert into " + tableName + " VALUES " + kansasCity.toSQL();
 			conn.prepareSync(sql).executeSync().closeSync();
 	
-			if (err){ handleError(err, res, conn); return; }
-			
 			commands.push("\tCreate Document -> " + kansasCity.toString());
 			commands.push("\tSingle Insert SQL: " + sql);
 				
@@ -122,8 +118,6 @@ function doEverything(res){
 			conn.prepareSync("insert into " + tableName + " VALUES " + madrid.toSQL()).executeSync().closeSync();
 			conn.prepareSync("insert into " + tableName + " VALUES " + melbourne.toSQL()).executeSync().closeSync();
 	
-			if (err){ handleError(err, res, conn); return; }
-	
 			//3 Queries
 			//3.1 Find one document in a table that matches a query condition
 	
@@ -133,8 +127,6 @@ function doEverything(res){
 			var condition = "population > 8000000 and code = 1";
 			sql = "select * from " + tableName + " where " + condition + " limit 1";
 			var result = conn.querySync(sql);
-			
-			if (err){ handleError(err, res, conn); return; }
 			
 			commands.push("\tFirst document with: " + condition);
 			commands.push("\tFirst document -> ", JSON.stringify(result));
@@ -148,8 +140,6 @@ function doEverything(res){
 			sql = "select * from " + tableName + " where " + condition;
 			result = conn.querySync(sql);
 			
-			if (err){ handleError(err, res, conn); return; }
-			
 			commands.push("\tFind all documents with: " + condition);
 			commands.push("\tFound Documents: ", JSON.stringify(result));
 			commands.push("\tQuery All SQL: " + sql);
@@ -157,8 +147,6 @@ function doEverything(res){
 			//3.3 Find all documents in a table
 	
 			commands.push("\n#3.3 Find all documents in a table");
-			
-			if (err){ handleError(err, res, conn); return; }
 			
 			sql = "select * from " + tableName;
 			result = conn.querySync(sql);
@@ -175,8 +163,6 @@ function doEverything(res){
 			sql = "select count(*) from " + tableName + " where " + condition;
 			result = conn.querySync(sql);
 			
-			if (err){ handleError(err, res, conn); return; }
-			
 			commands.push("\tCount documents with: " + condition);
 			commands.push("\tNumber of Documents: ", JSON.stringify(result));
 			commands.push("\tCount Documents SQL: " + sql);
@@ -190,8 +176,6 @@ function doEverything(res){
 			sql = "select * from " + tableName + " order by " + condition;
 			result = conn.querySync(sql);
 			
-			if (err){ handleError(err, res, conn); return; }
-			
 			commands.push("\tSort documents by: " + condition);
 			commands.push("\tSorted documents: ", JSON.stringify(result));
 			commands.push("\tOrder By SQL: " + sql);
@@ -204,21 +188,15 @@ function doEverything(res){
 			sql = "create table if not exists " + tableJoin + " (countryCode INTEGER, countryName VARCHAR(255))";
 			conn.prepareSync(sql).executeSync().closeSync();
 	
-			if (err){ handleError(err, res, conn); return; }
-			
 			conn.prepareSync("insert into " + tableJoin + " VALUES (1,\"United States of America\")").executeSync().closeSync();
 			conn.prepareSync("insert into " + tableJoin + " VALUES (44,\"United Kingdom\")").executeSync().closeSync();
 			conn.prepareSync("insert into " + tableJoin + " VALUES (81,\"Japan\")").executeSync().closeSync();
 			conn.prepareSync("insert into " + tableJoin + " VALUES (34,\"Spain\")").executeSync().closeSync();
 			conn.prepareSync("insert into " + tableJoin + " VALUES (61,\"Australia\")").executeSync().closeSync();
 			
-			if (err){ handleError(err, res, conn); return; }
-			
 			//join tables
 			sql = "select n.city, n.population, n.longitude, n.latitude, n.code, j.countryName from " + tableName + " n inner join " + tableJoin + " j on n.code=j.countryCode";
 			result = conn.querySync(sql);
-			
-			if (err){ handleError(err, res, conn); return; }
 			
 			commands.push("\tJoin tables: " + tableName + " and " + tableJoin);
 			commands.push("\tJoined Documents: ", JSON.stringify(result));
@@ -226,13 +204,9 @@ function doEverything(res){
 	
 			//3.7 Find distinct fields in a table
 	
-			commands.push("\n3.7 Find distinct fields in a table");
-			
 			condition = "longitude > 40.0";
 			sql = "select distinct code from " + tableName + " where " + condition;
 			result = conn.querySync(sql);
-			
-			if (err){ handleError(err, res, conn); return; }
 			
 			commands.push("\tFind distinct with: " + condition);
 			commands.push("\tDocuments found: ", JSON.stringify(result));
@@ -247,8 +221,6 @@ function doEverything(res){
 			sql = "select distinct " + projection + " from " + tableName + " where " + condition;
 			result = conn.querySync(sql);
 			
-			if (err){ handleError(err, res, conn); return; }
-			
 			commands.push("\tFind: " + projection + " with: " + condition);
 			commands.push("\tDocument found: ", JSON.stringify(result));
 			commands.push("\tProjection SQL: " + sql);
@@ -261,8 +233,6 @@ function doEverything(res){
 			sql = "update " + tableName + " set code = " + updatedValue + " where city  = '" + seattle.name + "'";
 			conn.prepareSync(sql).executeSync().closeSync();
 			
-			if (err){ handleError(err, res, conn); return; }
-			
 			commands.push("\tDocument to update: " + kansasCity.name);
 			commands.push("\tUpdate SQL: " + sql);
 	
@@ -272,8 +242,6 @@ function doEverything(res){
 			
 			sql = "delete from " + tableName + " where city like '"+ tokyo.name + "'";
 			conn.prepareSync(sql).executeSync().closeSync();
-			
-			if (err){ handleError(err, res, conn); return; }
 			
 			commands.push("\tDelete documents: " + tokyo.name);
 			commands.push("\tDelete SQL: " + sql);
@@ -290,8 +258,6 @@ function doEverything(res){
 			conn.commitTransactionSync();
 			//end
 			
-			if (err){ handleError(err, res, conn); return; }
-			
 			commands.push("\tInsert Document");
 			commands.push("\tUpdate Document");
 			commands.push("\tCommit Changes...");
@@ -301,8 +267,6 @@ function doEverything(res){
 			conn.prepareSync("delete from " + tableName + " where city like 'Sydney'").executeSync().closeSync();
 			conn.rollbackTransactionSync();
 			//end
-			
-			if (err){ handleError(err, res, conn); return; }
 			
 			commands.push("\tDelete Document");
 			commands.push("\tRollback...");
@@ -317,8 +281,6 @@ function doEverything(res){
 			sql = "select count(*) from " + tableName;
 			result = conn.querySync(sql);
 			
-			if (err){ handleError(err, res, conn); return; }
-			
 			commands.push("\tCount documents in table: " + tableName);
 			commands.push("\tNumber of documents: ", JSON.stringify(result));
 			commands.push("\tCount SQL " + sql);
@@ -329,8 +291,6 @@ function doEverything(res){
 			
 			sql = "select distinct code from " + tableName;
 			result = conn.querySync(sql);
-			
-			if (err){ handleError(err, res, conn); return; }
 			
 			commands.push("\tFind distinct code in: " + tableName);
 			commands.push("\tDocuments Found: ", JSON.stringify(result));
@@ -343,15 +303,11 @@ function doEverything(res){
 			sql = "drop table " + tableName;
 			conn.prepareSync(sql).executeSync().closeSync();
 			
-			if (err){ handleError(err, res, conn); return; }
-			
 			commands.push("\tDrop table: " + tableName);
 			commands.push("\tDrop Table SQL: " + sql);
 			
 			sql = "drop table " + tableJoin;
 			conn.prepareSync(sql).executeSync().closeSync();
-			
-			if (err){ handleError(err, res, conn); return; }
 			
 			commands.push("\tDrop table: " + tableJoin);
 			commands.push("\tDrop Table SQL: " + sql);
